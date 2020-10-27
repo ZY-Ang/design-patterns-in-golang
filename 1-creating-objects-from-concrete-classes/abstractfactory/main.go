@@ -43,7 +43,8 @@ type tapiocaChip struct {
 	chip
 }
 
-// potatoChipFactory and tapiocaChipFactory implements chipFactoryInterface
+// potatoChipFactory and tapiocaChipFactory implements chipFactoryInterface.
+// These are the abstract factories that make concrete, edible chips
 type potatoChipFactory struct {}
 type tapiocaChipFactory struct {}
 func (c *potatoChipFactory) makeChip() chipInterface {
@@ -64,12 +65,12 @@ func (c *tapiocaChipFactory) makeChip() chipInterface {
 }
 
 func newChipFactory(_type string) (chipFactoryInterface, error) {
-	allowedChipFactories := map[string]chipFactoryInterface{
-		TypePotato:  &potatoChipFactory{},
-		TypeTapioca: &tapiocaChipFactory{},
+	allowedChipFactories := map[string]func()chipFactoryInterface{
+		TypePotato:  func()chipFactoryInterface{return &potatoChipFactory{}},
+		TypeTapioca: func()chipFactoryInterface{return &tapiocaChipFactory{}},
 	}
-	if factory, exists := allowedChipFactories[_type]; exists {
-		return factory, nil
+	if factoryGenerator, exists := allowedChipFactories[_type]; exists {
+		return factoryGenerator(), nil
 	}
 	return nil, fmt.Errorf("%s is not a valid chip factory", _type)
 }
