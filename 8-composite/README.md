@@ -1,0 +1,1 @@
+Please refer to the example in [4-prototype](../4-prototype/prototype/main.go).
